@@ -101,6 +101,10 @@ export class CalendarUpcomingCard extends LitElement implements LovelaceCard {
       const endTime = new Date(now);
       endTime.setDate(endTime.getDate() + (this.config.days_ahead || 7));
 
+      console.log('Loading events from', this.config.entity);
+      console.log('Start time:', startTime.toISOString());
+      console.log('End time:', endTime.toISOString());
+
       const events = await this.hass.callWS<CalendarEvent[]>({
         type: 'calendar/event/get',
         entity_id: this.config.entity,
@@ -108,9 +112,14 @@ export class CalendarUpcomingCard extends LitElement implements LovelaceCard {
         end_date_time: endTime.toISOString(),
       });
 
+      console.log('Received events:', events);
+      console.log('Number of events:', events?.length || 0);
+
       this.events = events
         .sort((a, b) => this.getEventStartTime(a).getTime() - this.getEventStartTime(b).getTime())
         .slice(0, this.config.max_events || 5);
+
+      console.log('Filtered events:', this.events);
     } catch (err) {
       console.error('Error loading calendar events:', err);
       this.events = [];
