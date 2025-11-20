@@ -1,0 +1,58 @@
+# Example configurations for Calendar Upcoming Card
+
+# Basic configuration
+type: custom:calendar-upcoming-card
+entity: calendar.personal
+title: Upcoming Events
+
+---
+
+# Show the next 3 days with horizontal layout
+type: custom:calendar-upcoming-card
+entity: calendar.work
+title: Work Schedule
+max_events: 10
+days_ahead: 3
+layout: horizontal
+show_location: true
+
+---
+
+# Show events from the last 2 hours and next 24 hours
+type: custom:calendar-upcoming-card
+entity: calendar.family
+title: Today's Events
+max_events: 8
+days_ahead: 1
+show_past_hours: 2
+time_format: 12h
+
+---
+
+# Show all of today's events (including past)
+type: custom:calendar-upcoming-card
+entity: calendar.holidays
+title: Today
+show_past_today: true
+days_ahead: 1
+date_format: long
+
+---
+
+# Minimal card - just upcoming events, no title
+type: custom:calendar-upcoming-card
+entity: calendar.birthdays
+max_events: 3
+show_location: false
+
+---
+
+# Next week's events with location
+type: custom:calendar-upcoming-card
+entity: calendar.events
+title: Next Week
+max_events: 15
+days_ahead: 7
+show_location: true
+time_format: 12h
+date_format: long
