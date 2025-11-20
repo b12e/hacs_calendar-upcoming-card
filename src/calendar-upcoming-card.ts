@@ -218,7 +218,7 @@ export class CalendarUpcomingCard extends LitElement implements LovelaceCard {
     if (!this.config.entity) {
       return html`
         <ha-card>
-          <div class="card-content vertical">
+          <div class="card-content">
             <div class="no-events">Please configure a calendar entity</div>
           </div>
         </ha-card>
@@ -227,73 +227,77 @@ export class CalendarUpcomingCard extends LitElement implements LovelaceCard {
 
     const layout = this.config.layout || 'vertical';
 
+    if (this.events.length === 0) {
+      return html`
+        <ha-card>
+          ${this.config.title
+            ? html`<h1 class="card-header">${this.config.title}</h1>`
+            : ''}
+          <div class="card-content">
+            <div class="no-events">No upcoming events</div>
+          </div>
+        </ha-card>
+      `;
+    }
+
     return html`
-      <ha-card>
+      <div class="card-container ${layout}">
         ${this.config.title
           ? html`<h1 class="card-header">${this.config.title}</h1>`
           : ''}
-        <div class="card-content ${layout}">
-          ${this.events.length === 0
-            ? html`<div class="no-events">No upcoming events</div>`
-            : this.events.map(
-                (event) => {
-                  const isPast = this.isPastEvent(event);
-                  const isOngoing = this.isOngoingEvent(event);
-                  const eventClass = isPast ? 'past' : isOngoing ? 'ongoing' : 'upcoming';
+        ${this.events.map((event) => {
+          const isPast = this.isPastEvent(event);
+          const isOngoing = this.isOngoingEvent(event);
+          const eventClass = isPast ? 'past' : isOngoing ? 'ongoing' : 'upcoming';
 
-                  return html`
-                    <div class="event ${eventClass}">
-                      <div class="event-content">
-                        <div class="event-title">${event.summary}</div>
-                        <div class="event-datetime">
-                          ${this.formatDateTime(event)}
-                        </div>
-                        ${this.config.show_location && event.location
-                          ? html`<div class="event-location">${event.location}</div>`
-                          : ''}
-                      </div>
-                    </div>
-                  `;
-                }
-              )}
-        </div>
-      </ha-card>
+          return html`
+            <ha-card class="event-card ${eventClass}">
+              <div class="event-content">
+                <div class="event-title">${event.summary}</div>
+                <div class="event-datetime">
+                  ${this.formatDateTime(event)}
+                </div>
+                ${this.config.show_location && event.location
+                  ? html`<div class="event-location">${event.location}</div>`
+                  : ''}
+              </div>
+            </ha-card>
+          `;
+        })}
+      </div>
     `;
   }
 
   static get styles(): CSSResultGroup {
     return css`
-      ha-card {
-        height: 100%;
+      :host {
+        display: block;
+      }
+
+      .card-container {
         display: flex;
+        gap: 12px;
+      }
+
+      .card-container.vertical {
         flex-direction: column;
+      }
+
+      .card-container.horizontal {
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
       }
 
       .card-header {
         padding: 16px;
         font-size: 1.2em;
         font-weight: 500;
-        margin: 0;
+        margin: 0 0 12px 0;
       }
 
       .card-content {
         padding: 16px;
-        flex: 1;
-        overflow-y: auto;
-      }
-
-      .card-content.vertical {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .card-content.horizontal {
-        display: flex;
-        flex-direction: row;
-        gap: 12px;
-        overflow-x: auto;
-        overflow-y: hidden;
       }
 
       .no-events {
@@ -303,34 +307,26 @@ export class CalendarUpcomingCard extends LitElement implements LovelaceCard {
         font-style: italic;
       }
 
-      .event {
-        background: var(--card-background-color, var(--ha-card-background, #fff));
-        border-radius: 8px;
-        padding: 12px 16px;
-        transition: transform 0.2s, box-shadow 0.2s;
+      ha-card.event-card {
         border-left: 4px solid;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 12px 16px;
+        cursor: default;
       }
 
-      .card-content.horizontal .event {
+      .card-container.horizontal ha-card.event-card {
         min-width: 250px;
         flex-shrink: 0;
       }
 
-      .event:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-      }
-
-      .event.upcoming {
+      ha-card.event-card.upcoming {
         border-left-color: var(--primary-color, #03a9f4);
       }
 
-      .event.ongoing {
+      ha-card.event-card.ongoing {
         border-left-color: #ff9800;
       }
 
-      .event.past {
+      ha-card.event-card.past {
         border-left-color: #4caf50;
         opacity: 0.7;
       }
@@ -351,9 +347,6 @@ export class CalendarUpcomingCard extends LitElement implements LovelaceCard {
       .event-datetime {
         font-size: 0.9em;
         color: var(--secondary-text-color);
-        display: flex;
-        align-items: center;
-        gap: 4px;
       }
 
       .event-location {
