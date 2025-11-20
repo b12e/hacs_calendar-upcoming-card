@@ -420,12 +420,17 @@ let CalendarUpcomingCard = class CalendarUpcomingCard extends i {
             console.log('Loading events from', this.config.entity);
             console.log('Start time:', startTime.toISOString());
             console.log('End time:', endTime.toISOString());
-            const events = await this.hass.callWS({
-                type: 'calendar/event/get',
-                entity_id: this.config.entity,
-                start_date_time: startTime.toISOString(),
-                end_date_time: endTime.toISOString(),
+            // Use the REST API to fetch calendar events
+            const url = `/api/calendars/${this.config.entity}?start=${startTime.toISOString()}&end=${endTime.toISOString()}`;
+            const response = await fetch(url, {
+                headers: {
+                    'Authorization': `Bearer ${this.hass.auth.data.access_token}`,
+                },
             });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const events = await response.json();
             console.log('Received events:', events);
             console.log('Number of events:', events?.length || 0);
             this.events = events
