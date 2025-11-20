@@ -203,6 +203,13 @@ export class CalendarUpcomingCard extends LitElement implements LovelaceCard {
     return endTime < new Date();
   }
 
+  private isOngoingEvent(event: CalendarEvent): boolean {
+    const now = new Date();
+    const startTime = this.getEventStartTime(event);
+    const endTime = this.getEventEndTime(event);
+    return startTime <= now && now <= endTime;
+  }
+
   protected render(): TemplateResult {
     if (!this.config || !this.hass) {
       return html``;
@@ -229,19 +236,25 @@ export class CalendarUpcomingCard extends LitElement implements LovelaceCard {
           ${this.events.length === 0
             ? html`<div class="no-events">No upcoming events</div>`
             : this.events.map(
-                (event) => html`
-                  <div class="event ${this.isPastEvent(event) ? 'past' : ''}">
-                    <div class="event-content">
-                      <div class="event-title">${event.summary}</div>
-                      <div class="event-datetime">
-                        ${this.formatDateTime(event)}
+                (event) => {
+                  const isPast = this.isPastEvent(event);
+                  const isOngoing = this.isOngoingEvent(event);
+                  const eventClass = isPast ? 'past' : isOngoing ? 'ongoing' : 'upcoming';
+
+                  return html`
+                    <div class="event ${eventClass}">
+                      <div class="event-content">
+                        <div class="event-title">${event.summary}</div>
+                        <div class="event-datetime">
+                          ${this.formatDateTime(event)}
+                        </div>
+                        ${this.config.show_location && event.location
+                          ? html`<div class="event-location">${event.location}</div>`
+                          : ''}
                       </div>
-                      ${this.config.show_location && event.location
-                        ? html`<div class="event-location">${event.location}</div>`
-                        : ''}
                     </div>
-                  </div>
-                `
+                  `;
+                }
               )}
         </div>
       </ha-card>
@@ -272,7 +285,7 @@ export class CalendarUpcomingCard extends LitElement implements LovelaceCard {
       .card-content.vertical {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 12px;
       }
 
       .card-content.horizontal {
@@ -291,11 +304,12 @@ export class CalendarUpcomingCard extends LitElement implements LovelaceCard {
       }
 
       .event {
-        background: var(--primary-color);
+        background: var(--card-background-color, var(--ha-card-background, #fff));
         border-radius: 8px;
         padding: 12px 16px;
         transition: transform 0.2s, box-shadow 0.2s;
-        border-left: 4px solid var(--accent-color);
+        border-left: 4px solid;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
       .card-content.horizontal .event {
@@ -305,12 +319,20 @@ export class CalendarUpcomingCard extends LitElement implements LovelaceCard {
 
       .event:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      .event.upcoming {
+        border-left-color: var(--primary-color, #03a9f4);
+      }
+
+      .event.ongoing {
+        border-left-color: #ff9800;
       }
 
       .event.past {
-        opacity: 0.6;
-        border-left-color: var(--disabled-text-color);
+        border-left-color: #4caf50;
+        opacity: 0.7;
       }
 
       .event-content {

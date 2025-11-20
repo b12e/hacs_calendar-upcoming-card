@@ -34,6 +34,7 @@ export declare class CalendarUpcomingCard extends LitElement implements Lovelace
     private formatTime;
     private formatDateTime;
     private isPastEvent;
+    private isOngoingEvent;
     protected render(): TemplateResult;
     static get styles(): CSSResultGroup;
 }
