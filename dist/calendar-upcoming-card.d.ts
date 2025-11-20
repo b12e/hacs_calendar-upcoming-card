@@ -20,6 +20,8 @@ export declare class CalendarUpcomingCard extends LitElement implements Lovelace
     hass: HomeAssistant;
     private config;
     private events;
+    private lastUpdate;
+    private updateInterval;
     static getConfigElement(): LovelaceCardEditor;
     static getStubConfig(): Partial<CalendarUpcomingCardConfig>;
     setConfig(config: CalendarUpcomingCardConfig): void;

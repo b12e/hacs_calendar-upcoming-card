@@ -38,6 +38,8 @@ export class CalendarUpcomingCard extends LitElement implements LovelaceCard {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private config!: CalendarUpcomingCardConfig;
   @state() private events: CalendarEvent[] = [];
+  private lastUpdate: number = 0;
+  private updateInterval: number = 5 * 60 * 1000; // 5 minutes in milliseconds
 
   public static getConfigElement(): LovelaceCardEditor {
     return document.createElement('calendar-upcoming-card-editor') as LovelaceCardEditor;
@@ -85,8 +87,20 @@ export class CalendarUpcomingCard extends LitElement implements LovelaceCard {
 
   protected updated(changedProps: Map<string, any>): void {
     super.updated(changedProps);
-    if (changedProps.has('hass') || changedProps.has('config')) {
+
+    // Always reload if config changes
+    if (changedProps.has('config')) {
       this.loadEvents();
+      return;
+    }
+
+    // For hass changes, only reload if enough time has passed
+    if (changedProps.has('hass')) {
+      const now = Date.now();
+      if (now - this.lastUpdate >= this.updateInterval) {
+        this.lastUpdate = now;
+        this.loadEvents();
+      }
     }
   }
 

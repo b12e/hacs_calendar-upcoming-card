@@ -362,6 +362,8 @@ let CalendarUpcomingCard = class CalendarUpcomingCard extends i {
     constructor() {
         super(...arguments);
         this.events = [];
+        this.lastUpdate = 0;
+        this.updateInterval = 5 * 60 * 1000; // 5 minutes in milliseconds
     }
     static getConfigElement() {
         return document.createElement('calendar-upcoming-card-editor');
@@ -404,8 +406,18 @@ let CalendarUpcomingCard = class CalendarUpcomingCard extends i {
     }
     updated(changedProps) {
         super.updated(changedProps);
-        if (changedProps.has('hass') || changedProps.has('config')) {
+        // Always reload if config changes
+        if (changedProps.has('config')) {
             this.loadEvents();
+            return;
+        }
+        // For hass changes, only reload if enough time has passed
+        if (changedProps.has('hass')) {
+            const now = Date.now();
+            if (now - this.lastUpdate >= this.updateInterval) {
+                this.lastUpdate = now;
+                this.loadEvents();
+            }
         }
     }
     async loadEvents() {
