@@ -86,7 +86,8 @@ Settings:
 <img width="1006" height="848" alt="image" src="https://github.com/user-attachments/assets/7bbc1aef-04b3-4eb2-803f-c655f747ccde" />
 
 Horizontal layout:
-<img width="453" height="1025" alt="image" src="https://github.com/user-attachments/assets/c7870112-1dd1-4a3f-ad05-6a717bcb170f" />
+<img width="1345" height="113" alt="image" src="https://github.com/user-attachments/assets/cae7356a-6274-4ebc-8622-7de0b0b06c5f" />
+
 
 Vertical layout:
 <img width="494" height="501" alt="image" src="https://github.com/user-attachments/assets/050bfa67-827a-4c51-ba2f-8c20676d64e9" />
