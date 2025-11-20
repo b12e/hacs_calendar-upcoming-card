@@ -311,11 +311,13 @@ export class CalendarUpcomingCard extends LitElement implements LovelaceCard {
         border-left: 4px solid;
         padding: 12px 16px;
         cursor: default;
+        flex: 1;
+        min-width: 0;
       }
 
       .card-container.horizontal ha-card.event-card {
         min-width: 250px;
-        flex-shrink: 0;
+        flex: 0 0 250px;
       }
 
       ha-card.event-card.upcoming {
