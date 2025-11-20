@@ -106,7 +106,7 @@ export class CalendarUpcomingCard extends LitElement implements LovelaceCard {
       console.log('End time:', endTime.toISOString());
 
       // Use the REST API to fetch calendar events
-      const url = `/calendars/${this.config.entity}?start=${startTime.toISOString()}&end=${endTime.toISOString()}`;
+      const url = `calendars/${this.config.entity}?start=${startTime.toISOString()}&end=${endTime.toISOString()}`;
       const events = await this.hass.callApi<CalendarEvent[]>('GET', url);
 
       console.log('Received events:', events);

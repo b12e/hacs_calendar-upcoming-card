@@ -421,7 +421,7 @@ let CalendarUpcomingCard = class CalendarUpcomingCard extends i {
             console.log('Start time:', startTime.toISOString());
             console.log('End time:', endTime.toISOString());
             // Use the REST API to fetch calendar events
-            const url = `/calendars/${this.config.entity}?start=${startTime.toISOString()}&end=${endTime.toISOString()}`;
+            const url = `calendars/${this.config.entity}?start=${startTime.toISOString()}&end=${endTime.toISOString()}`;
             const events = await this.hass.callApi('GET', url);
             console.log('Received events:', events);
             console.log('Number of events:', events?.length || 0);
