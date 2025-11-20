@@ -27,7 +27,7 @@ A customizable Home Assistant custom card for displaying upcoming calendar event
 
 ### Visual Editor (Recommended)
 
-The card is **fully configurable through the UI** - no YAML required!
+The card is **fully configurable through the UI**.
 
 1. In your Home Assistant dashboard, click the 3 dots menu and select "Edit Dashboard"
 2. Click "+ Add Card"
@@ -42,8 +42,6 @@ The card is **fully configurable through the UI** - no YAML required!
    - Display options (time, date, location)
    - Time and date formatting
 7. Click "Save"
-
-All settings are available in the visual editor - you never need to touch YAML!
 
 ### YAML Configuration (Optional)
 
