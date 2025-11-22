@@ -429,18 +429,12 @@ let CalendarUpcomingCard = class CalendarUpcomingCard extends i {
             const startTime = this.getStartTime(now);
             const endTime = new Date(now);
             endTime.setDate(endTime.getDate() + (this.config.days_ahead || 7));
-            console.log('Loading events from', this.config.entity);
-            console.log('Start time:', startTime.toISOString());
-            console.log('End time:', endTime.toISOString());
             // Use hass.callApi for automatic token management
             const url = `calendars/${this.config.entity}?start=${startTime.toISOString()}&end=${endTime.toISOString()}`;
             const events = await this.hass.callApi('GET', url);
-            console.log('Received events:', events);
-            console.log('Number of events:', events?.length || 0);
             this.events = events
                 .sort((a, b) => this.getEventStartTime(a).getTime() - this.getEventStartTime(b).getTime())
                 .slice(0, this.config.max_events || 5);
-            console.log('Filtered events:', this.events);
         }
         catch (err) {
             console.error('Error loading calendar events:', err);
